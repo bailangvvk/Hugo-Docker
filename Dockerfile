@@ -15,7 +15,7 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # 直接下载并构建 Hugo（无需本地源代码）
-RUN git clone https://github.com/gohugoio/hugo.git . && \
+RUN git clone --depth 1 https://github.com/gohugoio/hugo.git . && \
     CGO_ENABLED=1 go build \
     -tags extended,netgo,osusergo \
     -ldflags="-s -w -extldflags '-static' -X github.com/gohugoio/hugo/common/hugo.vendorInfo=docker" \
@@ -57,3 +57,4 @@ ENTRYPOINT ["hugo"]
 
 # 默认命令 - Hugo开发服务器
 CMD ["server", "--bind", "0.0.0.0", "--baseURL", "http://localhost:1313"]
+
