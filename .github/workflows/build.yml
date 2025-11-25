@@ -13,9 +13,12 @@ on:
    workflow_dispatch:
    push:
     branches: [ main ]
-    paths:
-      - '.Dockerfile'
-      - '.github/workflows/build.yaml'
+    # paths:
+    #   - '.Dockerfile'
+    #   - '.github/workflows/build.yaml'
+
+   schedule:
+    - cron: '0 3 * * 1' # 每周一构建一次 (例如，每周一凌晨3点)
 
 env:
   IMAGE_NAME: hugo
@@ -44,19 +47,15 @@ jobs:
       with:
         images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
         tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha,prefix={{branch}}-
-          type=raw,value=latest,enable={{is_default_branch}}
+          # type=raw,value=alpine
+          type=raw,value=latest
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
         context: .
-        # platforms: linux/amd64,linux/arm64
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
+        # platforms: linux/amd64
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
