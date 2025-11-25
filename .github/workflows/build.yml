@@ -1,5 +1,9 @@
 name: Build Hugo Docker Image
 
+permissions:
+  contents: read
+  security-events: write
+
 on:
   # push:
   #   branches: [ main, master ]
