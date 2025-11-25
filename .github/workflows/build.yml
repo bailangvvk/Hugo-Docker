@@ -14,8 +14,8 @@ on:
    push:
     branches: [ main ]
     paths:
-      - '.Dockerfile'
-      - '.github/workflows/build.yaml'
+      - 'Dockerfile'
+      - 'github/workflows/build.yaml'
 
 env:
   IMAGE_NAME: hugo
