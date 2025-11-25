@@ -1,11 +1,11 @@
 name: Build Hugo Docker Image
 
 on:
-  push:
-    branches: [ main, master ]
-    tags: [ 'v*' ]
-  pull_request:
-    branches: [ main, master ]
+  # push:
+  #   branches: [ main, master ]
+  #   tags: [ 'v*' ]
+  # pull_request:
+  #   branches: [ main, master ]
 
 env:
   IMAGE_NAME: hugo
@@ -44,7 +44,8 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        platforms: linux/amd64,linux/arm64
+        # platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
