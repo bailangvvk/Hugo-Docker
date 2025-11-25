@@ -4,11 +4,13 @@
 # 构建阶段 - 使用完整的构建环境
 FROM golang:1.24-alpine AS builder
 
-# 安装构建依赖
+# 安装构建依赖（包括C++编译器）
 RUN apk add --no-cache \
     gcc \
+    g++ \
     musl-dev \
-    git
+    git \
+    build-base
 
 WORKDIR /app
 
