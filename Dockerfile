@@ -12,16 +12,9 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-# 复制依赖文件（利用Docker层缓存）
-COPY go.mod go.sum ./
-RUN go mod download
-
-# 复制源代码
-COPY . .
-
-# 完全静态编译Hugo扩展版
-# 使用静态链接，不依赖任何外部库
-RUN CGO_ENABLED=1 go build \
+# 直接下载并构建 Hugo（无需本地源代码）
+RUN git clone https://github.com/gohugoio/hugo.git . && \
+    CGO_ENABLED=1 go build \
     -tags extended,netgo,osusergo \
     -ldflags="-s -w -extldflags '-static' -X github.com/gohugoio/hugo/common/hugo.vendorInfo=docker" \
     -o hugo
