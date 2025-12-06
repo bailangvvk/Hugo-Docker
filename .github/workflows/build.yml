@@ -9,6 +9,12 @@ on:
   schedule:
     - cron: '0 3 * * 1' # 每周一构建一次 (例如，每周一凌晨3点)
 
+# 明确设置权限，避免fork仓库的权限问题
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 env:
   DOCKER_REPO: bailangvvking/hugo
   IMAGE_NAME: hugo
@@ -55,7 +61,8 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy scan results
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.event_name != 'schedule'
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results.sarif'
+          category: 'container-vulnerability-scan'
