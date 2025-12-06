@@ -18,6 +18,7 @@ permissions:
 env:
   DOCKER_REPO: bailangvvking/hugo
   IMAGE_NAME: hugo
+  IMAGE_TAG: strip
 
 jobs:
   build-and-push:
@@ -45,19 +46,19 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.DOCKER_REPO }}:strip
+            ${{ env.DOCKER_REPO }}:${{ env.IMAGE_TAG }}
 
       - name: Output image info
         run: |
           echo "Image built and pushed successfully"
           echo "Repository: ${{ env.DOCKER_REPO }}"
-          echo "Tag: strip"
+          echo "Tag: ${{ env.IMAGE_TAG }}"
 
       - name: Scan image for vulnerabilities
         if: github.event_name != 'pull_request'
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:strip
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           format: 'sarif'
           output: 'trivy-results.sarif'
 
