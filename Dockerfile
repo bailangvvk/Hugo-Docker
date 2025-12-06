@@ -28,11 +28,10 @@ RUN set -eux \
     # && CGO_ENABLED=1 go build \
     && CGO_ENABLED=0 go build \
     -trimpath \
-    -tags extended,netgo,osusergo \
-    -ldflags="-s -w -extldflags '-static' -linkmode=external" \
-    -gcflags="all=-trimpath=/app" \
-    -asmflags="all=-trimpath=/app" \
-    -buildmode=pie \
+    -tags netgo,osusergo \
+    -ldflags="-s -w" \
+    # -gcflags="all=-trimpath=/app" \
+    # -asmflags="all=-trimpath=/app" \
     -o $FILENAME \
     # 显示构建后的文件大小
     && echo "Binary size after build:" \
