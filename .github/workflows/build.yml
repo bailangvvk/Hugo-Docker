@@ -6,8 +6,8 @@ on:
     branches: [ strip ]
   # schedule:
   #   - cron: '0 3 * * *' # 每天构建一次（可选）
-  # schedule:
-  #   - cron: '0 3 * * 1' # 每周一构建一次 (例如，每周一凌晨3点)
+  schedule:
+    - cron: '0 3 * * 1' # 每周一构建一次 (例如，每周一凌晨3点)
 
 # 明确设置权限，避免fork仓库的权限问题
 permissions:
@@ -46,34 +46,19 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.DOCKER_REPO }}:${{ env.IMAGE_TAG }}
-          # 启用缓存并设置清理策略
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          # 清理构建缓存
-          no-cache-filters: true
+            ${{ env.DOCKER_REPO }}:${{ secrets.IMAGE_TAG }}
 
       - name: Output image info
         run: |
           echo "Image built and pushed successfully"
           echo "Repository: ${{ env.DOCKER_REPO }}"
-          echo "Tag: ${{ env.IMAGE_TAG }}"
-          echo "Previous tags cleaned up"
-          
-      - name: Clean up Docker resources
-        run: |
-          # 清理构建缓存
-          docker builder prune --force --all
-          # 清理悬空镜像
-          docker image prune --force --all
-          # 清理悬空构建缓存
-          docker buildx prune --force --all
+          echo "Tag: ${{ secrets.IMAGE_TAG }}"
 
       - name: Scan image for vulnerabilities
         if: github.event_name != 'pull_request'
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
           format: 'sarif'
           output: 'trivy-results.sarif'
 
