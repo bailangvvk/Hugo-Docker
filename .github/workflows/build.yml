@@ -45,19 +45,19 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.DOCKER_REPO }}:${{ secrets.IMAGE_TAG }}
+            ${{ env.DOCKER_REPO }}:${{ env.IMAGE_TAG }}
 
       - name: Output image info
         run: |
           echo "Image built and pushed successfully"
           echo "Repository: ${{ env.DOCKER_REPO }}"
-          echo "Tag: ${{ secrets.IMAGE_TAG }}"
+          echo "Tag: ${{ env.IMAGE_TAG }}"
 
       - name: Scan image for vulnerabilities
         if: github.event_name != 'pull_request'
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           format: 'sarif'
           output: 'trivy-results.sarif'
 
