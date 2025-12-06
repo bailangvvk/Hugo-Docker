@@ -47,12 +47,27 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER_REPO }}:${{ env.IMAGE_TAG }}
+          # 启用缓存并设置清理策略
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # 清理构建缓存
+          no-cache-filters: true
 
       - name: Output image info
         run: |
           echo "Image built and pushed successfully"
           echo "Repository: ${{ env.DOCKER_REPO }}"
           echo "Tag: ${{ env.IMAGE_TAG }}"
+          echo "Previous tags cleaned up"
+          
+      - name: Clean up Docker resources
+        run: |
+          # 清理构建缓存
+          docker builder prune --force --all
+          # 清理悬空镜像
+          docker image prune --force --all
+          # 清理悬空构建缓存
+          docker buildx prune --force --all
 
       - name: Scan image for vulnerabilities
         if: github.event_name != 'pull_request'
